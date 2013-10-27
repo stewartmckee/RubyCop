@@ -13,6 +13,10 @@ module RubyCop
       '#<%s:0x%x>' % [self.class.name, object_id]
     end
 
+    def exceptions
+      @exceptions
+    end
+
     def blacklist_const(const)
       @const_list.blacklist(const)
     end
@@ -30,7 +34,12 @@ module RubyCop
         respond_to?("visit_#{ancestor.name.split('::').last}")
       end
       if klass
-        send("visit_#{klass.name.split('::').last}", node)
+        result = send("visit_#{klass.name.split('::').last}", node)
+        unless result
+          @exceptions = [] if @exceptions.nil?
+          @exceptions << klass.name.split('::').last
+        end
+        result
       else
         warn "unhandled node type: #{node.inspect}:#{node.class.name}"
         true
