@@ -37,7 +37,7 @@ module RubyCop
         result = send("visit_#{klass.name.split('::').last}", node)
         unless result
           @exceptions = [] if @exceptions.nil?
-          @exceptions << klass.name.split('::').last
+          @exceptions << {:klass => klass.name.split('::').last, :node => node}
         end
         result
       else
